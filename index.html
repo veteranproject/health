@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lari Sehat – BMI, Rencana Lari & Game</title>
+<style>
+:root{--bg:#f3f7f2;--surf:#fff;--ink:#14281d;--mut:#5b6f63;--line:#d6e2d9;--acc:#0f8a5f;--acc2:#ff7a3d;--warn:#d93f3f;--sky:#bfe6f5;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1a14;--surf:#16261e;--ink:#e8f3ec;--mut:#9bb3a5;--line:#2a4034;--acc:#3ddc97;--acc2:#ff9462;--warn:#ff6b6b;--sky:#1d3a4a}}
+:root[data-theme="dark"]{--bg:#0e1a14;--surf:#16261e;--ink:#e8f3ec;--mut:#9bb3a5;--line:#2a4034;--acc:#3ddc97;--acc2:#ff9462;--warn:#ff6b6b;--sky:#1d3a4a}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Trebuchet MS","Segoe UI",system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:860px;margin:0 auto;padding:18px 16px 40px}
+h1{font-family:Georgia,"Times New Roman",serif;font-size:clamp(28px,6vw,42px);margin:6px 0 2px;letter-spacing:-.5px}
+.sub{color:var(--mut);margin:0 0 16px}
+nav{display:flex;gap:6px;background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:5px;margin-bottom:16px;overflow-x:auto}
+nav button{flex:1;min-width:max-content;border:0;background:none;color:var(--mut);font:inherit;font-weight:700;padding:10px 14px;border-radius:10px;cursor:pointer}
+nav button.on{background:var(--acc);color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc2);outline-offset:2px}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+label{display:block;font-size:14px;color:var(--mut);font-weight:700}
+input,select{width:100%;margin-top:4px;padding:11px;border:1.5px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit}
+.btn{background:var(--acc2);color:#1b0f08;border:0;border-radius:12px;padding:12px 20px;font:inherit;font-weight:800;cursor:pointer;margin-top:14px}
+.btn.alt{background:var(--acc);color:#fff}
+.hide{display:none}
+.big{font-family:Georgia,serif;font-size:56px;line-height:1;margin:4px 0;font-weight:700}
+.pill{display:inline-block;padding:4px 12px;border-radius:99px;font-weight:800;color:#fff;font-size:14px}
+.scale{position:relative;height:16px;border-radius:99px;margin:18px 0 6px;background:linear-gradient(90deg,#4aa3df 0 18%,#2fbf71 18% 50%,#f1b92f 50% 68%,#e8683a 68% 100%)}
+.scale i{position:absolute;top:-6px;width:6px;height:28px;border-radius:4px;background:var(--ink);border:2px solid var(--surf);transform:translateX(-50%);transition:left .6s}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.stat{background:var(--bg);border-radius:12px;padding:12px}
+.stat b{display:block;font-size:24px;font-family:Georgia,serif}
+.stat span{font-size:13px;color:var(--mut)}
+.note{font-size:13px;color:var(--mut)}
+.warn{color:var(--warn);font-weight:700}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td,th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left}
+.tbl{overflow-x:auto}
+svg text{fill:var(--mut);font-size:11px}
+canvas{width:100%;max-width:100%;border-radius:14px;border:1px solid var(--line);background:var(--sky);touch-action:manipulation;display:block}
+.hud{display:flex;justify-content:space-between;font-weight:800;margin-bottom:8px;flex-wrap:wrap;gap:6px}
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.badge{padding:6px 12px;border-radius:99px;background:var(--bg);border:1px dashed var(--line);font-size:13px;color:var(--mut)}
+.badge.got{background:var(--acc);color:#fff;border:1px solid var(--acc)}
+.seq{font-family:Georgia,serif;font-size:clamp(26px,6vw,40px);text-align:center;margin:14px 0;font-weight:700}
+.opt{padding:14px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:20px;font-weight:800;cursor:pointer}
+.opt.ok{background:var(--acc);color:#fff;border-color:var(--acc)}.opt.bad{background:var(--warn);color:#fff;border-color:var(--warn)}
+.seg{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.seg .btn{margin-top:0;padding:9px 14px}
+.ni{padding:12px 0;border-bottom:1px solid var(--line)}.ni a{color:var(--ink);font-weight:800;text-decoration:none;font-size:17px}
+.ni a:hover{text-decoration:underline}.ni small{color:var(--mut);display:block}.ni p{margin:4px 0 0;font-size:14px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Lari Sehat 🏃</h1>
+<p class="sub">Hitung BMI, cari jarak lari yang pas, tetapkan target, lalu main game untuk santai.</p>
+
+<nav id="tabs">
+<button data-t="bmi" class="on">BMI</button>
+<button data-t="plan">Rencana Lari</button>
+<button data-t="target">Target Bulanan</button>
+<button data-t="game">Game Lari</button>
+<button data-t="logic">Game Logika</button>
+<button data-t="news">Berita</button>
+</nav>
+
+<section id="bmi">
+<div class="card">
+<div class="grid">
+<label>Jenis kelamin<select id="sex"><option value="m">Laki-laki</option><option value="f">Perempuan</option></select></label>
+<label>Usia (tahun)<input id="age" type="number" value="25" min="10" max="90"></label>
+<label>Tinggi (cm)<input id="h" type="number" value="165" min="100" max="230"></label>
+<label>Berat (kg)<input id="w" type="number" value="70" min="25" max="250" step="0.1"></label>
+<label>Berat target (kg)<input id="tw" type="number" value="62" min="25" max="250" step="0.1"></label>
+<label>Waktu target (bulan)<input id="mo" type="number" value="3" min="1" max="24"></label>
+<label>Level lari<select id="lvl"><option value="1">Pemula</option><option value="2" selected>Menengah</option><option value="3">Mahir</option></select></label>
+</div>
+<button class="btn" id="calc">Hitung sekarang</button>
+</div>
+<div id="bmiOut" class="card hide">
+<div class="note">BMI kamu</div>
+<div class="big" id="bmiVal"></div>
+<span class="pill" id="bmiCat"></span>
+<div class="scale"><i id="mark"></i></div>
+<div class="note" style="display:flex;justify-content:space-between"><span>15</span><span>18,5</span><span>25</span><span>27</span><span>35+</span></div>
+<div class="stats" id="bmiStats"></div>
+<p class="note">Kategori mengikuti acuan Kemenkes RI (Asia): kurus &lt; 18,5, normal 18,5–25, gemuk 25–27, obesitas &gt; 27. BMI tidak membedakan otot dan lemak, jadi anggap sebagai gambaran umum.</p>
+</div>
+</section>
+
+<section id="plan" class="hide"><div id="planOut"></div></section>
+<section id="target" class="hide"><div id="targetOut"></div></section>
+
+<section id="logic" class="hide"><div class="card">
+<div class="hud"><span>Soal <span id="lq">1</span>/10</span><span>Skor: <span id="ls">0</span></span><span>Waktu: <span id="lt2">20</span> dtk</span></div>
+<div id="lbox"></div></div></section>
+
+<section id="news" class="hide"><div class="card">
+<div class="seg"><button class="btn alt" data-r="id">Indonesia</button><button class="btn" data-r="world">Dunia</button><button class="btn" id="nref">Muat ulang</button></div>
+<div id="newsList"></div><p class="note" id="nmeta"></p></div></section>
+
+<section id="game" class="hide">
+<div class="card">
+<div class="hud"><span>Jarak: <span id="gs">0</span> m</span><span>Koin: <span id="gc">0</span></span><span>Rekor: <span id="gb">0</span> m</span></div>
+<canvas id="cv" width="800" height="300" aria-label="Game lari"></canvas>
+<p class="note">Tekan Spasi / ↑ atau tap layar untuk melompat. Hindari batu dan kumpulkan koin. Kalau lari beneran, jangan lupa pemanasan!</p>
+<button class="btn alt" id="start">Mulai main</button>
+<div class="badges" id="badges"></div>
+</div>
+</section>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const fmt=(n,d=1)=>Number(n).toLocaleString("id-ID",{maximumFractionDigits:d,minimumFractionDigits:d});
+let S=null;
+// tabs
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
+  document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
+  ["bmi","plan","target","logic","news","game"].forEach(t=>$(t).classList.toggle("hide",t!==b.dataset.t));
+  if(b.dataset.t!=="game")stopGame();
+  if(b.dataset.t!=="logic")clearInterval(lt);
+  if(b.dataset.t==="news")loadNews();
+  if(b.dataset.t==="logic"&&(!L||L.n>=10||L.n===0))newLogic();
+});
+try{const saved=JSON.parse(localStorage.getItem("larisehat")||"null");if(saved)for(const k in saved)if($(k))$(k).value=saved[k]}catch(e){}
+
+function cat(b){
+  if(b<18.5)return["Kurus","#4aa3df"];
+  if(b<25)return["Normal","#2fbf71"];
+  if(b<27)return["Gemuk","#d99a10"];
+  return["Obesitas","#e8683a"];
+}
+function calc(){
+  const v={sex:$("sex").value,age:+$("age").value,h:+$("h").value,w:+$("w").value,tw:+$("tw").value,mo:+$("mo").value,lvl:+$("lvl").value};
+  if(!(v.h>0&&v.w>0&&v.tw>0&&v.mo>0&&v.age>0)){alert("Isi semua kolom dengan angka yang valid.");return}
+  try{localStorage.setItem("larisehat",JSON.stringify({sex:v.sex,age:v.age,h:v.h,w:v.w,tw:v.tw,mo:v.mo,lvl:v.lvl}))}catch(e){}
+  const hm=v.h/100,bmi=v.w/(hm*hm),[c,col]=cat(bmi);
+  const lo=18.5*hm*hm,hi=24.9*hm*hm;
+  // BMR Mifflin-St Jeor
+  const bmr=10*v.w+6.25*v.h-5*v.age+(v.sex==="m"?5:-161);
+  S={...v,bmi,c,col,lo,hi,bmr};
+  $("bmiOut").classList.remove("hide");
+  $("bmiVal").textContent=fmt(bmi);$("bmiVal").style.color=col;
+  $("bmiCat").textContent=c;$("bmiCat").style.background=col;
+  const pos=Math.min(98,Math.max(2,(bmi-15)/(35-15)*100));
+  $("mark").style.left=pos+"%";
+  const diff=v.w<lo?lo-v.w:(v.w>hi?v.w-hi:0);
+  $("bmiStats").innerHTML=
+   `<div class="stat"><b>${fmt(lo)}–${fmt(hi)} kg</b><span>Berat ideal untuk tinggimu</span></div>`+
+   `<div class="stat"><b>${diff?fmt(diff)+" kg":"Sudah ideal"}</b><span>${v.w<lo?"Perlu naik":v.w>hi?"Perlu turun":"Pertahankan"}</span></div>`+
+   `<div class="stat"><b>${fmt(bmr,0)} kkal</b><span>Kebutuhan dasar harian (BMR)</span></div>`;
+  renderPlan();renderTarget();
+}
+function plan(){
+  // weekly deficit needed, share covered by running
+  const kg=S.w-S.tw,weeks=S.mo*4.345;
+  const caps={1:12,2:25,3:45}; // km/minggu per level
+  const maxSessions={1:3,2:4,3:5}[S.lvl];
+  let wk,goal;
+  if(kg>0){goal="turun";wk=(kg*7700/weeks)*0.5/(S.w*1.0)}
+  else if(kg<0){goal="naik";wk=0}
+  else{goal="jaga";wk=0}
+  const base={1:9,2:15,3:25}[S.lvl]; // kesehatan dasar
+  let km=Math.max(base,wk);
+  const capped=km>caps[S.lvl];km=Math.min(km,caps[S.lvl]);
+  if(goal==="naik")km=Math.min(km,{1:6,2:12,3:20}[S.lvl]);
+  const sess=Math.min(maxSessions,Math.max(3,Math.ceil(km/8)));
+  const per=km/sess;
+  const kcalWk=km*S.w*1.0;
+  return{kg,weeks,km,sess,per,kcalWk,capped,goal};
+}
+function renderPlan(){
+  const p=plan();S.p=p;
+  const days=["Sen","Sel","Rab","Kam","Jum","Sab","Min"];
+  const sets={3:[0,2,4],4:[0,2,4,5],5:[0,1,3,4,5]}[p.sess];
+  const rows=days.map((d,i)=>{
+    const run=sets.includes(i);
+    const t=run?(i===sets[sets.length-1]?"Lari panjang: "+fmt(p.per*1.3)+" km":"Lari santai: "+fmt(p.per*0.85)+" km"):(i===6||i===3?"Istirahat / jalan kaki 30 menit":"Latihan kekuatan 20 menit");
+    return`<tr><td><b>${d}</b></td><td>${t}</td></tr>`}).join("");
+  const pace={1:"7–8 menit/km",2:"6–7 menit/km",3:"5–6 menit/km"}[S.lvl];
+  $("planOut").innerHTML=`<div class="card"><div class="note">Target jarak lari per minggu</div>
+  <div class="big" style="color:var(--acc)">${fmt(p.km)} km</div>
+  <div class="stats">
+  <div class="stat"><b>${p.sess}x</b><span>Sesi per minggu</span></div>
+  <div class="stat"><b>${fmt(p.per)} km</b><span>Rata-rata per sesi</span></div>
+  <div class="stat"><b>${fmt(p.kcalWk,0)}</b><span>Kkal terbakar / minggu (perkiraan)</span></div>
+  <div class="stat"><b>${pace}</b><span>Pace nyaman (bisa ngobrol)</span></div></div>
+  ${p.capped?'<p class="warn">Kebutuhan lari untuk targetmu melebihi batas aman level ini. Perpanjang waktu atau atur kalori makan.</p>':''}
+  <p class="note">Rumus kasar: membakar ± 1 kkal per kg berat badan per km. Rencana ini mengandalkan lari untuk setengah defisit kalori, setengahnya lagi dari pola makan. WHO menyarankan minimal 150 menit aktivitas sedang per minggu.</p></div>
+  <div class="card"><b>Jadwal contoh satu minggu</b><div class="tbl"><table>${rows}</table></div>
+  <p class="note">Naikkan jarak maksimal 10% per minggu. Sakit di sendi atau nyeri dada: hentikan dan periksa ke dokter.</p></div>`;
+}
+function renderTarget(){
+  const p=S.p,kg=p.kg,per=kg/S.mo;
+  const weekly=Math.abs(per)/4.345;
+  const rows=[];let w=S.w;
+  for(let m=0;m<=S.mo;m++){rows.push({m,w:S.w-per*m})}
+  const kcalDay=Math.abs(per)*7700/30;
+  let msg="";
+  if(kg>0){
+    msg=weekly>1?`<p class="warn">Turun ${fmt(weekly,2)} kg/minggu terlalu cepat. Batas aman sekitar 0,25–0,75 kg/minggu. Coba perpanjang waktu.</p>`:`<p>Laju ${fmt(weekly,2)} kg/minggu masih aman. Defisit sekitar ${fmt(kcalDay,0)} kkal per hari, separuhnya dari lari.</p>`;
+  }else if(kg<0){
+    msg=`<p>Untuk naik ${fmt(-kg)} kg, tambah sekitar ${fmt(kcalDay,0)} kkal per hari dari makanan bergizi dan protein, dengan lari ringan sebagai penjaga stamina.</p>`;
+  }else msg="<p>Berat targetmu sama dengan sekarang. Fokus menjaga kebugaran.</p>";
+  if(S.tw<S.lo-0.5||S.tw>S.hi+0.5)msg+=`<p class="warn">Berat target di luar rentang ideal (${fmt(S.lo)}–${fmt(S.hi)} kg).</p>`;
+  // svg chart
+  const W=600,H=200,pad=34,ws=rows.map(r=>r.w),mx=Math.max(...ws)+1,mn=Math.min(...ws)-1;
+  const X=i=>pad+i*(W-pad*2)/Math.max(1,S.mo),Y=v=>H-pad-(v-mn)/(mx-mn)*(H-pad*2);
+  const pts=rows.map((r,i)=>X(i)+","+Y(r.w)).join(" ");
+  const dots=rows.map((r,i)=>`<circle cx="${X(i)}" cy="${Y(r.w)}" r="4" fill="var(--acc)"/><text x="${X(i)}" y="${H-10}" text-anchor="middle">B${r.m}</text><text x="${X(i)}" y="${Y(r.w)-9}" text-anchor="middle">${fmt(r.w)}</text>`).join("");
+  $("targetOut").innerHTML=`<div class="card"><div class="note">Target kamu</div>
+  <div class="big" style="color:var(--acc2)">${kg>0?"−":"+"}${fmt(Math.abs(kg))} kg</div>
+  <div class="note">dalam ${S.mo} bulan: ${fmt(S.w)} → ${fmt(S.tw)} kg</div>
+  <div class="stats"><div class="stat"><b>${fmt(Math.abs(per))} kg</b><span>Per bulan</span></div>
+  <div class="stat"><b>${fmt(weekly,2)} kg</b><span>Per minggu</span></div>
+  <div class="stat"><b>${fmt(p.km*4.345,0)} km</b><span>Total lari per bulan</span></div></div>${msg}</div>
+  <div class="card"><b>Proyeksi berat badan</b>
+  <svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Grafik proyeksi berat"><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="3"/>${dots}</svg></div>
+  <div class="card"><b>Target per bulan</b><div class="tbl"><table><tr><th>Bulan</th><th>Berat</th><th>BMI</th><th>Lari</th></tr>${rows.slice(1).map(r=>`<tr><td>${r.m}</td><td>${fmt(r.w)} kg</td><td>${fmt(r.w/Math.pow(S.h/100,2))}</td><td>${fmt(p.km*4.345,0)} km</td></tr>`).join("")}</table></div></div>`;
+}
+$("calc").onclick=calc;
+
+// ---------- GAME ----------
+const cv=$("cv"),cx=cv.getContext("2d"),GY=250;
+let g=null,raf=0,best=0,got={};
+try{best=+localStorage.getItem("larisehat_best")||0}catch(e){}
+$("gb").textContent=best;
+const BADGES=[[100,"Pemanasan 100 m"],[500,"Pelari 500 m"],[1000,"1 km sehat"],[2500,"Maraton mini"]];
+function drawBadges(){$("badges").innerHTML=BADGES.map(b=>`<span class="badge ${got[b[0]]?"got":""}">${got[b[0]]?"✓ ":""}${b[1]}</span>`).join("")}
+drawBadges();
+function reset(){g={y:GY,vy:0,obs:[],coins:[],t:0,speed:5,score:0,coin:0,over:false,next:60}}
+function jump(){if(!g||g.over)return;if(g.y>=GY){g.vy=-15.5}}
+document.addEventListener("keydown",e=>{if((e.code==="Space"||e.code==="ArrowUp")&&!$("game").classList.contains("hide")){e.preventDefault();g&&g.over?startGame():jump()}});
+cv.addEventListener("pointerdown",()=>g&&g.over?startGame():jump());
+function startGame(){cancelAnimationFrame(raf);reset();$("start").textContent="Main lagi";loop()}
+function stopGame(){cancelAnimationFrame(raf);if(g)g.over=true}
+$("start").onclick=startGame;
+function loop(){
+  const c=getComputedStyle(document.documentElement);
+  g.t++;g.speed=5+g.score/400;g.score+=g.speed/10;
+  g.vy+=0.85;g.y+=g.vy;if(g.y>GY){g.y=GY;g.vy=0}
+  if(g.t>=g.next){
+    g.obs.push({x:830,w:26+Math.random()*18,h:34+Math.random()*28});
+    if(Math.random()<.7)g.coins.push({x:830+80+Math.random()*80,y:GY-40-Math.random()*90});
+    g.next=g.t+Math.max(45,95-g.speed*4)+Math.random()*40;
+  }
+  g.obs.forEach(o=>o.x-=g.speed);g.coins.forEach(k=>k.x-=g.speed);
+  g.obs=g.obs.filter(o=>o.x>-60);g.coins=g.coins.filter(k=>k.x>-20);
+  const px=90,pw=26,ph=46;
+  for(const o of g.obs){
+    if(px+pw-6>o.x&&px+6<o.x+o.w&&g.y>GY-o.h+4)g.over=true;
+  }
+  g.coins=g.coins.filter(k=>{if(Math.abs(k.x-(px+13))<24&&Math.abs(k.y-(g.y-ph/2))<34){g.coin++;return false}return true});
+  // draw
+  cx.clearRect(0,0,800,300);
+  cx.fillStyle="#9fd6ec";
+  cx.fillStyle=getComputedStyle(cv).backgroundColor;cx.fillRect(0,0,800,300);
+  cx.fillStyle="rgba(255,255,255,.55)";
+  for(let i=0;i<3;i++){const x=((i*330-g.t*0.6)%960+960)%960-80;cx.beginPath();cx.ellipse(x,60+i*28,50,16,0,0,7);cx.fill()}
+  cx.fillStyle="#3b7d4f";cx.fillRect(0,GY+2,800,60);
+  cx.fillStyle="#2c6340";for(let x=-(g.t*g.speed)%40;x<800;x+=40)cx.fillRect(x,GY+14,20,4);
+  g.obs.forEach(o=>{cx.fillStyle="#6b6b6b";cx.beginPath();cx.moveTo(o.x,GY+2);cx.lineTo(o.x+o.w*.2,GY+2-o.h);cx.lineTo(o.x+o.w*.8,GY+2-o.h*.85);cx.lineTo(o.x+o.w,GY+2);cx.fill()});
+  g.coins.forEach(k=>{cx.fillStyle="#f6b73c";cx.beginPath();cx.arc(k.x,k.y,9,0,7);cx.fill();cx.fillStyle="#fff3c4";cx.fillRect(k.x-2,k.y-5,3,10)});
+  // runner
+  const leg=Math.sin(g.t*.5)*10,by=g.y;
+  cx.strokeStyle="#14281d";cx.lineWidth=5;cx.lineCap="round";
+  cx.fillStyle="#ff7a3d";cx.fillRect(px,by-34,pw,22);
+  cx.beginPath();cx.moveTo(px+8,by-12);cx.lineTo(px+8+(g.y<GY?8:leg),by);cx.moveTo(px+18,by-12);cx.lineTo(px+18-(g.y<GY?-8:leg),by);cx.stroke();
+  cx.fillStyle="#f1c9a0";cx.beginPath();cx.arc(px+13,by-44,10,0,7);cx.fill();
+  cx.fillStyle="#14281d";cx.fillRect(px+13,by-47,10,3);
+  $("gs").textContent=Math.floor(g.score);$("gc").textContent=g.coin;
+  const sc=Math.floor(g.score);
+  BADGES.forEach(b=>{if(sc>=b[0]&&!got[b[0]]){got[b[0]]=1;drawBadges()}});
+  if(g.over){
+    if(sc>best){best=sc;$("gb").textContent=best;try{localStorage.setItem("larisehat_best",best)}catch(e){}}
+    cx.fillStyle="rgba(0,0,0,.55)";cx.fillRect(0,0,800,300);
+    cx.fillStyle="#fff";cx.textAlign="center";cx.font="bold 36px Georgia";cx.fillText("Selesai! "+sc+" m",400,130);
+    cx.font="20px sans-serif";cx.fillText("Koin "+g.coin+" · Tap atau Spasi untuk main lagi",400,170);cx.textAlign="start";
+    return;
+  }
+  raf=requestAnimationFrame(loop);
+}
+reset();g.over=true;
+cx.fillStyle="#9fd6ec";cx.fillRect(0,0,800,300);cx.fillStyle="#3b7d4f";cx.fillRect(0,252,800,60);
+cx.fillStyle="#14281d";cx.font="bold 28px Georgia";cx.textAlign="center";cx.fillText("Tekan Mulai main",400,140);
+
+// ---------- GAME LOGIKA: pola angka ----------
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+let L=null,lt=0,lbest=0;
+try{lbest=+localStorage.getItem("larisehat_logic")||0}catch(e){}
+function genQ(){
+  const t=rnd(0,4);let s=[],hint="";
+  if(t===0){const a=rnd(1,20),d=rnd(2,9);s=[0,1,2,3,4].map(i=>a+d*i);hint="Selisih antar angka selalu sama."}
+  else if(t===1){const a=rnd(1,4),r=rnd(2,3);s=[0,1,2,3,4].map(i=>a*Math.pow(r,i));hint="Setiap angka dikali bilangan yang sama."}
+  else if(t===2){const k=rnd(1,6);s=[0,1,2,3,4].map(i=>(i+k)*(i+k));hint="Ini deretan bilangan kuadrat."}
+  else if(t===3){s=[rnd(1,5),rnd(1,5)];while(s.length<5)s.push(s[s.length-1]+s[s.length-2]);hint="Angka berikutnya = jumlah dua angka sebelumnya."}
+  else{const d=rnd(3,8),e=rnd(1,2);s=[rnd(10,30)];for(let i=1;i<5;i++)s.push(s[i-1]+(i%2?d:-e));hint="Naik dan turun bergantian dengan selisih tetap."}
+  const ans=s[4],set=new Set([ans]);
+  while(set.size<4){const v=ans+rnd(-9,9);if(v>0)set.add(v)}
+  return{seq:s.slice(0,4),ans,hint,opts:[...set].sort(()=>Math.random()-.5)};
+}
+function newLogic(){L={n:0,score:0,streak:0};nextQ()}
+function nextQ(){
+  clearInterval(lt);
+  if(L.n>=10){endLogic();return}
+  L.n++;L.q=genQ();L.time=20;L.done=false;L.hinted=0;
+  $("lq").textContent=L.n;$("ls").textContent=L.score;$("lt2").textContent=L.time;
+  const b=$("lbox");b.innerHTML="";
+  const p=document.createElement("div");p.className="seq";p.textContent=L.q.seq.join(" , ")+" , ?";b.appendChild(p);
+  const o=document.createElement("div");o.className="grid";
+  L.q.opts.forEach(v=>{const x=document.createElement("button");x.className="opt";x.textContent=v;x.onclick=()=>answer(v);o.appendChild(x)});
+  b.appendChild(o);
+  const f=document.createElement("p");f.id="lf";f.className="note";f.textContent="Temukan pola, lalu pilih angka berikutnya.";b.appendChild(f);
+  const h=document.createElement("button");h.className="btn alt";h.textContent="Petunjuk (-5 poin)";
+  h.onclick=()=>{if(L.done)return;if(!L.hinted){L.hinted=1;L.score=Math.max(0,L.score-5);$("ls").textContent=L.score}f.textContent="Petunjuk: "+L.q.hint};
+  b.appendChild(h);
+  lt=setInterval(()=>{L.time--;$("lt2").textContent=L.time;if(L.time<=0)answer(null)},1000);
+}
+function answer(v){
+  if(L.done)return;L.done=true;clearInterval(lt);
+  const ok=v===L.q.ans,f=$("lf");
+  if(ok){L.streak++;L.score+=10+L.time+Math.min(L.streak,5)*2;f.textContent="Benar! Streak "+L.streak+"."}
+  else{L.streak=0;f.textContent=(v===null?"Waktu habis. ":"Kurang tepat. ")+"Jawabannya "+L.q.ans+"."}
+  document.querySelectorAll("#lbox .opt").forEach(x=>{x.disabled=true;if(+x.textContent===L.q.ans)x.classList.add("ok");else if(+x.textContent===v)x.classList.add("bad")});
+  $("ls").textContent=L.score;
+  setTimeout(nextQ,1500);
+}
+function endLogic(){
+  if(L.score>lbest){lbest=L.score;try{localStorage.setItem("larisehat_logic",lbest)}catch(e){}}
+  const r=L.score>=250?"Jenius logika!":L.score>=150?"Bagus sekali!":"Terus berlatih, pasti naik.";
+  const b=$("lbox");b.innerHTML="";
+  const h=document.createElement("div");h.className="seq";h.textContent="Skor "+L.score;b.appendChild(h);
+  const p=document.createElement("p");p.style.textAlign="center";p.textContent=r+" Rekor kamu: "+lbest;b.appendChild(p);
+  const x=document.createElement("button");x.className="btn alt";x.textContent="Main lagi";x.onclick=newLogic;b.appendChild(x);
+}
+
+// ---------- BERITA (lewat Google Apps Script) ----------
+const NEWS_API="https://script.google.com/macros/s/AKfycbys5GipPe9CztM2AshYmyn7fITlaCnkwFMOQoYHVzK6rig2VjF-uwxdrUWx674pObEr/exec";
+let nreg="id";
+document.querySelectorAll("#news [data-r]").forEach(b=>b.onclick=()=>{
+  nreg=b.dataset.r;
+  document.querySelectorAll("#news [data-r]").forEach(x=>x.className=x===b?"btn alt":"btn");
+  loadNews();
+});
+$("nref").onclick=()=>loadNews();
+function showNews(d,note){
+  const box=$("newsList");box.innerHTML="";
+  (d.items||[]).forEach(it=>{
+    if(!/^https?:\/\//.test(it.link))return;
+    const w=document.createElement("div");w.className="ni";
+    const a=document.createElement("a");a.href=it.link;a.target="_blank";a.rel="noopener noreferrer";a.textContent=it.title;
+    const m=document.createElement("small");
+    m.textContent=it.source+(it.date?" · "+new Date(it.date).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"}):"");
+    w.appendChild(a);w.appendChild(m);
+    if(it.summary){const s=document.createElement("p");s.textContent=it.summary;w.appendChild(s)}
+    box.appendChild(w);
+  });
+  if(!box.children.length)box.textContent="Belum ada berita.";
+  $("nmeta").textContent=note||"";
+}
+async function loadNews(){
+  const box=$("newsList");
+  if(NEWS_API.startsWith("PASTE")){box.textContent="Isi konstanta NEWS_API di index.html dengan URL web app Apps Script kamu.";return}
+  box.textContent="Memuat berita...";
+  try{
+    const r=await fetch(NEWS_API+"?region="+nreg);
+    if(!r.ok)throw new Error(r.status);
+    const d=await r.json();
+    try{localStorage.setItem("news_"+nreg,JSON.stringify(d))}catch(e){}
+    showNews(d,"Diperbarui "+new Date(d.updated).toLocaleString("id-ID",{dateStyle:"medium",timeStyle:"short"}));
+  }catch(e){
+    let c=null;try{c=JSON.parse(localStorage.getItem("news_"+nreg)||"null")}catch(_){}
+    if(c)showNews(c,"Offline. Menampilkan berita tersimpan.");
+    else box.textContent="Gagal memuat berita. Cek URL Apps Script dan pengaturan akses (Anyone).";
+  }
+}
+
+calc();
+</script>
+</body>
+</html>
