@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lari Sehat – BMI, Rencana Lari & Game</title>
+<title>Hidup Sehat &amp; Cerdas – Kesehatan, Progres, Insight</title>
 <style>
 :root{--bg:#f3f7f2;--surf:#fff;--ink:#14281d;--mut:#5b6f63;--line:#d6e2d9;--acc:#0f8a5f;--acc2:#ff7a3d;--warn:#d93f3f;--sky:#bfe6f5;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -51,20 +51,33 @@ canvas{width:100%;max-width:100%;border-radius:14px;border:1px solid var(--line)
 .seg{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}.seg .btn{margin-top:0;padding:9px 14px}
 .ni{padding:12px 0;border-bottom:1px solid var(--line)}.ni a{color:var(--ink);font-weight:800;text-decoration:none;font-size:17px}
 .ni a:hover{text-decoration:underline}.ni small{color:var(--mut);display:block}.ni p{margin:4px 0 0;font-size:14px;color:var(--mut)}
+.pb{height:14px;border-radius:99px;background:var(--bg);overflow:hidden;margin:8px 0;border:1px solid var(--line)}
+.pb i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width .6s}
+.del{background:none;border:0;color:var(--warn);cursor:pointer;font-weight:800;font:inherit}
+.seg .btn.on{outline:2px solid var(--ink)}
+.vg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin:10px 0}
+.vc{background:var(--bg);border-radius:12px;overflow:hidden;border:1px solid var(--line)}
+.vc .th{position:relative;aspect-ratio:16/9;background:#000;cursor:pointer;border:0;padding:0;width:100%;display:block}
+.vc img{width:100%;height:100%;object-fit:cover;display:block}
+.vc iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
+.vc .in{padding:10px}.vc b{font-size:14px;display:block;line-height:1.35}.vc small{color:var(--mut)}
+.play{position:absolute;inset:0;margin:auto;width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.65);color:#fff;display:grid;place-items:center;font-size:18px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<h1>Lari Sehat 🏃</h1>
-<p class="sub">Hitung BMI, cari jarak lari yang pas, tetapkan target, lalu main game untuk santai.</p>
+<h1>Hidup Sehat &amp; Cerdas 🏃📈</h1>
+<p class="sub">Pantau tubuh, catat progres, asah logika, dan ikuti insight ekonomi, pasar, keuangan, serta teknologi.</p>
 
 <nav id="tabs">
 <button data-t="bmi" class="on">BMI</button>
 <button data-t="plan">Rencana Lari</button>
 <button data-t="target">Target Bulanan</button>
+<button data-t="progress">Progres</button>
 <button data-t="game">Game Lari</button>
 <button data-t="logic">Game Logika</button>
-<button data-t="news">Berita</button>
+<button data-t="news">Insight</button>
+<button data-t="video">Video</button>
 </nav>
 
 <section id="bmi">
@@ -94,12 +107,34 @@ canvas{width:100%;max-width:100%;border-radius:14px;border:1px solid var(--line)
 <section id="plan" class="hide"><div id="planOut"></div></section>
 <section id="target" class="hide"><div id="targetOut"></div></section>
 
+<section id="progress" class="hide">
+<div class="card"><b>Catat progres</b>
+<div class="grid" style="margin-top:8px">
+<label>Tanggal<input id="pd" type="date"></label>
+<label>Berat (kg)<input id="pw" type="number" step="0.1" min="25" max="250"></label>
+<label>Jarak lari (km)<input id="pk" type="number" step="0.01" min="0" max="100"></label>
+<label>Durasi (menit)<input id="pm" type="number" step="1" min="0" max="600"></label>
+<label>Catatan<input id="pn" type="text" maxlength="80" placeholder="opsional"></label></div>
+<button class="btn" id="psave">Simpan progres</button>
+<p class="note">Data tersimpan otomatis di browser ini dan tidak hilang saat direfresh. Ekspor berkala sebagai cadangan atau untuk pindah perangkat.</p>
+<div class="seg"><button class="btn alt" id="pexp">Ekspor cadangan</button><button class="btn alt" id="pimpb">Impor cadangan</button><input type="file" id="pimp" accept="application/json" hidden></div></div>
+<div id="progOut"></div></section>
+
+<section id="video" class="hide"><div class="card">
+<div class="seg" id="vchips"></div>
+<p class="note" id="vNote"></p>
+<div class="vg" id="vList"></div>
+<a class="btn" id="vLink" target="_blank" rel="noopener noreferrer" style="display:inline-block;text-decoration:none">Cari di YouTube</a>
+</div></section>
+
 <section id="logic" class="hide"><div class="card">
 <div class="hud"><span>Soal <span id="lq">1</span>/10</span><span>Skor: <span id="ls">0</span></span><span>Waktu: <span id="lt2">20</span> dtk</span></div>
 <div id="lbox"></div></div></section>
 
 <section id="news" class="hide"><div class="card">
-<div class="seg"><button class="btn alt" data-r="id">Indonesia</button><button class="btn" data-r="world">Dunia</button><button class="btn" id="nref">Muat ulang</button></div>
+<b>Pasar hari ini</b><div class="stats" id="mk"></div>
+<p class="note">Data pasar tertunda dan hanya informasi, bukan nasihat investasi.</p>
+<div class="seg" style="margin-top:12px"><button class="btn alt" data-r="id">Indonesia</button><button class="btn" data-r="world">Dunia</button><button class="btn" data-r="economy">Ekonomi</button><button class="btn" data-r="markets">Saham &amp; Pasar</button><button class="btn" data-r="finance">Keuangan</button><button class="btn" data-r="tech">Teknologi</button><button class="btn" data-r="health">Kesehatan</button><button class="btn" id="nref">Muat ulang</button></div>
 <div id="newsList"></div><p class="note" id="nmeta"></p></div></section>
 
 <section id="game" class="hide">
@@ -120,10 +155,12 @@ let S=null;
 // tabs
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{
   document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x===b));
-  ["bmi","plan","target","logic","news","game"].forEach(t=>$(t).classList.toggle("hide",t!==b.dataset.t));
+  ["bmi","plan","target","progress","logic","news","video","game"].forEach(t=>$(t).classList.toggle("hide",t!==b.dataset.t));
   if(b.dataset.t!=="game")stopGame();
   if(b.dataset.t!=="logic")clearInterval(lt);
-  if(b.dataset.t==="news")loadNews();
+  if(b.dataset.t==="news"){loadNews();loadQuotes()}
+  if(b.dataset.t==="progress")renderProg();
+  if(b.dataset.t==="video")loadVideos();
   if(b.dataset.t==="logic"&&(!L||L.n>=10||L.n===0))newLogic();
 });
 try{const saved=JSON.parse(localStorage.getItem("larisehat")||"null");if(saved)for(const k in saved)if($(k))$(k).value=saved[k]}catch(e){}
@@ -376,6 +413,149 @@ async function loadNews(){
     let c=null;try{c=JSON.parse(localStorage.getItem("news_"+nreg)||"null")}catch(_){}
     if(c)showNews(c,"Offline. Menampilkan berita tersimpan.");
     else box.textContent="Gagal memuat berita. Cek URL Apps Script dan pengaturan akses (Anyone).";
+  }
+}
+
+// ---------- PASAR ----------
+async function loadQuotes(){
+  if(NEWS_API.startsWith("PASTE"))return;
+  try{
+    const r=await fetch(NEWS_API+"?type=quotes");const d=await r.json();
+    const box=$("mk");box.innerHTML="";
+    (d.quotes||[]).forEach(q=>{
+      const c=document.createElement("div");c.className="stat";
+      const b=document.createElement("b");b.textContent=Number(q.price).toLocaleString("id-ID",{maximumFractionDigits:2});
+      const t=document.createElement("span");t.textContent=q.name+" "+(q.chg>=0?"+":"")+q.chg.toFixed(2)+"%";
+      t.style.color=q.chg>=0?"var(--acc)":"var(--warn)";
+      c.appendChild(b);c.appendChild(t);box.appendChild(c);
+    });
+  }catch(e){}
+}
+
+// ---------- PROGRES (tersimpan di localStorage) ----------
+let LOG=[];
+try{LOG=JSON.parse(localStorage.getItem("ls_log")||"[]")}catch(e){LOG=[]}
+if(!Array.isArray(LOG))LOG=[];
+const ymd=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const mon=str=>{const d=new Date(str+"T00:00");d.setDate(d.getDate()-((d.getDay()+6)%7));return ymd(d)};
+const sortLog=()=>LOG.sort((a,b)=>a.d<b.d?-1:a.d>b.d?1:a.id-b.id);
+const pace=p=>Math.floor(p)+":"+String(Math.floor((p%1)*60)).padStart(2,"0");
+function saveLog(){try{localStorage.setItem("ls_log",JSON.stringify(LOG))}catch(e){alert("Penyimpanan browser tidak tersedia. Gunakan Ekspor untuk cadangan.")}}
+$("pd").value=ymd(new Date());
+$("psave").onclick=()=>{
+  const w=parseFloat($("pw").value),k=parseFloat($("pk").value)||0,m=parseFloat($("pm").value)||0,d=$("pd").value;
+  if(!d||(!(w>0)&&!(k>0))){alert("Isi tanggal, lalu berat dan/atau jarak lari.");return}
+  LOG.push({id:Date.now(),d,w:w>0?w:null,k,m,n:$("pn").value.slice(0,80)});
+  sortLog();saveLog();["pw","pk","pm","pn"].forEach(i=>$(i).value="");renderProg();
+};
+$("progOut").onclick=e=>{const id=e.target.dataset&&e.target.dataset.del;if(id&&confirm("Hapus catatan ini?")){LOG=LOG.filter(x=>String(x.id)!==id);saveLog();renderProg()}};
+$("pexp").onclick=()=>{
+  const b=new Blob([JSON.stringify({log:LOG},null,1)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="progres-"+ymd(new Date())+".json";a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+};
+$("pimpb").onclick=()=>$("pimp").click();
+$("pimp").onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result),arr=Array.isArray(d)?d:d.log;if(!Array.isArray(arr))throw 0;
+    const ids=new Set(LOG.map(x=>x.id));
+    arr.forEach(x=>{if(x&&typeof x.d==="string"&&!ids.has(x.id))LOG.push({id:+x.id||Date.now()+Math.random(),d:x.d,w:+x.w||null,k:+x.k||0,m:+x.m||0,n:String(x.n||"").slice(0,80)})});
+    sortLog();saveLog();renderProg();alert("Impor selesai.");
+  }catch(_){alert("File tidak valid.")}};
+  r.readAsText(f);e.target.value="";
+};
+function renderProg(){
+  const o=$("progOut");
+  if(!S){o.textContent="Hitung BMI dulu di tab BMI.";return}
+  const ws=LOG.filter(e=>e.w),start=S.w,cur=ws.length?ws[ws.length-1].w:S.w;
+  const tot=start-S.tw,pct=Math.round(Math.min(100,Math.max(0,tot===0?100:(start-cur)/tot*100)));
+  const runs=LOG.filter(e=>e.k>0),km=runs.reduce((a,e)=>a+e.k,0);
+  const pr=runs.filter(e=>e.m>0),pk=pr.reduce((a,e)=>a+e.k,0),pt=pr.reduce((a,e)=>a+e.m,0);
+  const wk0=mon(ymd(new Date())),wkm=runs.filter(e=>mon(e.d)===wk0).reduce((a,e)=>a+e.k,0);
+  const days=new Set(runs.map(e=>e.d));let st=0,c=new Date();
+  if(!days.has(ymd(c)))c.setDate(c.getDate()-1);
+  while(days.has(ymd(c))){st++;c.setDate(c.getDate()-1)}
+  const target=S.p?S.p.km:0,hm=S.h/100,bmiNow=cur/(hm*hm);
+  // grafik berat
+  const W=600,H=190,pd=34;let wsvg='<p class="note">Catat berat minimal 2 kali untuk melihat grafik.</p>';
+  if(ws.length>=2){
+    const v=ws.map(e=>e.w).concat(S.tw),mx=Math.max(...v)+1,mn=Math.min(...v)-1;
+    const X=i=>pd+i*(W-pd*2)/(ws.length-1),Y=y=>H-pd-(y-mn)/(mx-mn)*(H-pd*2);
+    const pts=ws.map((e,i)=>X(i)+","+Y(e.w)).join(" ");
+    const lab=ws.length<=8?ws.map((e,i)=>`<text x="${X(i)}" y="${Y(e.w)-8}" text-anchor="middle">${fmt(e.w)}</text>`).join(""):"";
+    wsvg=`<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Grafik berat badan"><line x1="${pd}" x2="${W-pd}" y1="${Y(S.tw)}" y2="${Y(S.tw)}" stroke="var(--acc2)" stroke-dasharray="6 5"/><text x="${W-pd}" y="${Y(S.tw)-5}" text-anchor="end">Target ${fmt(S.tw)} kg</text><polyline points="${pts}" fill="none" stroke="var(--acc)" stroke-width="3"/>${ws.map((e,i)=>`<circle cx="${X(i)}" cy="${Y(e.w)}" r="3.5" fill="var(--acc)"/>`).join("")}${lab}</svg>`;
+  }
+  // grafik km mingguan (8 minggu)
+  const wk=[];let d0=new Date(wk0+"T00:00");
+  for(let i=7;i>=0;i--){const d=new Date(d0);d.setDate(d.getDate()-7*i);const key=ymd(d);wk.push({key,km:runs.filter(e=>mon(e.d)===key).reduce((a,e)=>a+e.k,0)})}
+  const bm=Math.max(target,...wk.map(x=>x.km),1),bw=(W-pd*2)/8;
+  const bars=wk.map((x,i)=>{const h=x.km/bm*(H-pd*2);return`<rect x="${pd+i*bw+6}" y="${H-pd-h}" width="${bw-12}" height="${h}" rx="4" fill="var(--acc)"/><text x="${pd+i*bw+bw/2}" y="${H-pd-h-4}" text-anchor="middle">${x.km?fmt(x.km):""}</text><text x="${pd+i*bw+bw/2}" y="${H-10}" text-anchor="middle">${x.key.slice(5)}</text>`}).join("");
+  const ty=H-pd-target/bm*(H-pd*2);
+  const rows=LOG.slice(-30).reverse().map(e=>`<tr><td>${e.d}</td><td>${e.w?fmt(e.w)+" kg":"-"}</td><td>${e.k?fmt(e.k,2)+" km":"-"}</td><td>${e.m?e.m+" mnt":"-"}</td><td>${esc(e.n||"")}</td><td><button class="del" data-del="${e.id}" aria-label="Hapus">✕</button></td></tr>`).join("");
+  o.innerHTML=`<div class="card"><div class="note">Progres menuju berat target</div>
+  <div class="big" style="color:var(--acc)">${pct}%</div><div class="pb"><i style="width:${pct}%"></i></div>
+  <div class="note">${fmt(start)} kg → <b>${fmt(cur)} kg</b> → ${fmt(S.tw)} kg</div>
+  <div class="stats">
+  <div class="stat"><b>${fmt(Math.abs(start-cur))} kg</b><span>${cur<=start?"Sudah turun":"Sudah naik"}</span></div>
+  <div class="stat"><b>${fmt(bmiNow)}</b><span>BMI sekarang (${cat(bmiNow)[0]})</span></div>
+  <div class="stat"><b>${fmt(km)} km</b><span>Total lari (${runs.length}x)</span></div>
+  <div class="stat"><b>${fmt(wkm)} / ${fmt(target)} km</b><span>Minggu ini vs rencana</span></div>
+  <div class="stat"><b>${st} hari</b><span>Streak lari</span></div>
+  <div class="stat"><b>${pk?pace(pt/pk)+" /km":"-"}</b><span>Pace rata-rata</span></div>
+  <div class="stat"><b>${fmt(km*cur,0)}</b><span>Kkal terbakar (perkiraan)</span></div></div></div>
+  <div class="card"><b>Berat badan</b>${wsvg}</div>
+  <div class="card"><b>Jarak lari per minggu</b><svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Grafik km mingguan"><line x1="${pd}" x2="${W-pd}" y1="${ty}" y2="${ty}" stroke="var(--acc2)" stroke-dasharray="6 5"/><text x="${W-pd}" y="${ty-5}" text-anchor="end">Rencana ${fmt(target)} km</text>${bars}</svg></div>
+  <div class="card"><b>Riwayat</b>${rows?`<div class="tbl"><table><tr><th>Tanggal</th><th>Berat</th><th>Lari</th><th>Durasi</th><th>Catatan</th><th></th></tr>${rows}</table></div>`:'<p class="note">Belum ada catatan. Simpan yang pertama di atas.</p>'}</div>`;
+}
+
+// ---------- VIDEO YOUTUBE ----------
+const VCATS=[["foryou","Untuk kamu"],["run","Teknik lari"],["nutrition","Nutrisi"],["strength","Kekuatan"],["mental","Mental & tidur"],["economy","Ekonomi"],["stocks","Saham & investasi"],["finance","Keuangan pribadi"],["tech","Teknologi"],["logic","Logika & puzzle"]];
+const VQ={lose:"olahraga lari turunkan berat badan untuk pemula",gain:"cara menaikkan berat badan sehat dan olahraga",keep:"menjaga berat badan ideal gaya hidup sehat",run1:"lari untuk pemula teknik dan tips",run2:"latihan lari 5K 10K meningkatkan stamina",run3:"latihan interval tempo run half marathon",nutrition:"nutrisi makanan sehat untuk pelari dan diet",strength:"latihan kekuatan di rumah untuk pelari",mental:"tidur cukup dan kesehatan mental olahraga",economy:"analisis ekonomi Indonesia",stocks:"belajar saham dan investasi untuk pemula",finance:"mengatur keuangan pribadi dana darurat",tech:"teknologi terbaru AI gadget",logic:"puzzle logika melatih otak"};
+let vcat="foryou";
+function vkey(c){
+  if(c==="foryou"){if(!S)return"run2";return S.w>S.tw?"lose":S.w<S.tw?"gain":"keep"}
+  if(c==="run")return"run"+(S?S.lvl:2);
+  return c;
+}
+function vChips(){
+  const b=$("vchips");b.innerHTML="";
+  VCATS.forEach(([k,n])=>{const x=document.createElement("button");x.className=k===vcat?"btn alt":"btn";x.textContent=n;x.onclick=()=>{vcat=k;vChips();loadVideos()};b.appendChild(x)});
+}
+vChips();
+function showVideos(d){
+  const box=$("vList");box.innerHTML="";
+  (d.videos||[]).forEach(v=>{
+    if(!/^[\w-]{11}$/.test(v.id))return;
+    const c=document.createElement("div");c.className="vc";
+    const t=document.createElement("button");t.className="th";t.setAttribute("aria-label","Putar: "+v.title);
+    const im=document.createElement("img");im.src="https://i.ytimg.com/vi/"+v.id+"/mqdefault.jpg";im.alt="";im.loading="lazy";
+    const pl=document.createElement("span");pl.className="play";pl.textContent="▶";
+    t.appendChild(im);t.appendChild(pl);
+    t.onclick=()=>{const f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+v.id+"?autoplay=1&rel=0";f.allow="autoplay; encrypted-media; picture-in-picture";f.allowFullscreen=true;f.title=v.title;c.replaceChild(f,t)};
+    const i=document.createElement("div");i.className="in";
+    const ti=document.createElement("b");ti.textContent=v.title;
+    const m=document.createElement("small");m.textContent=v.channel+(v.date?" · "+new Date(v.date).toLocaleDateString("id-ID",{dateStyle:"medium"}):"");
+    const a=document.createElement("a");a.href="https://www.youtube.com/watch?v="+v.id;a.target="_blank";a.rel="noopener noreferrer";a.textContent="Buka di YouTube";a.style.cssText="display:block;margin-top:6px;font-size:13px;color:var(--acc)";
+    i.appendChild(ti);i.appendChild(m);i.appendChild(a);c.appendChild(t);c.appendChild(i);box.appendChild(c);
+  });
+  if(!box.children.length)box.textContent="Belum ada video.";
+}
+async function loadVideos(){
+  const key=vkey(vcat),box=$("vList");
+  $("vLink").href="https://www.youtube.com/results?search_query="+encodeURIComponent(VQ[key]);
+  $("vNote").textContent=vcat==="foryou"&&S?"Disesuaikan dengan targetmu ("+(key==="lose"?"turun berat":key==="gain"?"naik berat":"jaga berat")+"). Video edukasi umum, bukan nasihat medis atau investasi.":"Video edukasi umum, bukan nasihat medis atau investasi.";
+  if(NEWS_API.startsWith("PASTE")){box.textContent="Isi NEWS_API untuk rekomendasi otomatis, atau pakai tombol Cari di YouTube.";return}
+  box.textContent="Memuat video...";
+  try{
+    const r=await fetch(NEWS_API+"?type=video&key="+encodeURIComponent(key));
+    const d=await r.json();if(d.error)throw new Error(d.error);
+    try{localStorage.setItem("vid_"+key,JSON.stringify(d))}catch(e){}
+    showVideos(d);
+  }catch(e){
+    let c=null;try{c=JSON.parse(localStorage.getItem("vid_"+key)||"null")}catch(_){}
+    if(c)showVideos(c);else box.textContent="Rekomendasi otomatis belum aktif (aktifkan YouTube Data API di Apps Script). Pakai tombol Cari di YouTube.";
   }
 }
 
